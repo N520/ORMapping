@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
 public class LogbookEntry implements Serializable {
@@ -21,8 +22,9 @@ public class LogbookEntry implements Serializable {
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, optional = false)
 	private Employee employee;
 
-	// TODO Projectphase (Analyze, Implementation, Testing, Maintenance etc) one to one
-	
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	private Phase phase;
+
 	public LogbookEntry() {
 
 	}

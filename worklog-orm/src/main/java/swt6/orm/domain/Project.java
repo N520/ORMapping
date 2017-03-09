@@ -25,6 +25,8 @@ public class Project implements Serializable {
 	// TODO create issue entity (one project - many issures)
 
 	// TODO create Project Leader (one to one)
+	
+	// TODO create Phase (one Phase hase many entries)
 
 	public Long getId() {
 		return id;
