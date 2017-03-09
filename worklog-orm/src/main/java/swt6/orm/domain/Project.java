@@ -22,6 +22,10 @@ public class Project implements Serializable {
 	@ManyToMany(cascade = CascadeType.ALL) // ????ß
 	private Set<Employee> members = new HashSet<>();
 
+	// TODO create issue entity (one project - many issures)
+
+	// TODO create Project Leader (one to one)
+
 	public Long getId() {
 		return id;
 	}

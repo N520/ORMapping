@@ -21,6 +21,8 @@ public class LogbookEntry implements Serializable {
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, optional = false)
 	private Employee employee;
 
+	// TODO Projectphase (Analyze, Implementation, Testing, Maintenance etc) one to one
+	
 	public LogbookEntry() {
 
 	}
@@ -29,6 +31,7 @@ public class LogbookEntry implements Serializable {
 		return id;
 	}
 
+	@SuppressWarnings("unused")
 	private void setId(Long id) {
 		this.id = id;
 	}

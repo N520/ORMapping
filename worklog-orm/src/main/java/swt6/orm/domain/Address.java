@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
+
+//TODO make own entity with zipcode & street as key
 //v2
 @Embeddable
 

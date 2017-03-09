@@ -34,6 +34,7 @@ public class Employee implements Serializable {
 	// when no annotation give Address is serialized (if serzializabel)
 	// v2
 	// address is Embedded in address column
+	// TODO make Address own entity
 	@Embedded
 	@AttributeOverrides({ @AttributeOverride(name = "zipCode", column = @Column(name = "adress_zipCode")) })
 	// v3
@@ -43,6 +44,8 @@ public class Employee implements Serializable {
 
 	@ManyToMany(cascade = CascadeType.ALL)
 	private Set<Project> projects = new HashSet<>();
+	
+	//TODO connect with issues (one employee many issues)
 
 	// Classes persisted with Hibernate must have default constructor
 	public Employee() {
