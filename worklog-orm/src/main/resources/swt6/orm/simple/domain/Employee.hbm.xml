@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 07-Mar-2017 09:08:02 by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+	<class name="swt6.simple.domain.Employee">
+		<id name="id" type="java.lang.Long">
+			<generator class="native" />
+		</id>
+		<property name="firstName" />
+		<property name="lastName" type="java.lang.String">
+			<column name="LASTNAME" />
+		</property>
+		<property name="dateOfBirth" type="java.util.Date">
+			<column name="DATEOFBIRTH" />
+		</property>
+
+		
+	</class>
+</hibernate-mapping>
