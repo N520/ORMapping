@@ -17,6 +17,7 @@ import javax.persistence.Id;
 @Entity
 public class Phase implements Serializable {
 
+	
 	private enum PhaseDescriptor {
 		ANALYSIS, IMPLEMENTATION, TEST, MAINTENANCE, OTHER
 	}

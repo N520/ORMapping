@@ -6,6 +6,7 @@ import org.hibernate.cfg.Configuration;
 
 import swt6.orm.domain.Employee;
 import swt6.orm.domain.LogbookEntry;
+import swt6.orm.domain.Phase;
 import swt6.orm.domain.Project;
 
 public class HibernateUtil {
@@ -25,6 +26,7 @@ public class HibernateUtil {
 			config.addAnnotatedClass(Employee.class);
 			config.addAnnotatedClass(LogbookEntry.class);
 			config.addAnnotatedClass(Project.class);
+			config.addAnnotatedClass(Phase.class);
 			sessionFactory = config.buildSessionFactory();
 
 		}

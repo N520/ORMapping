@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Project implements Serializable {
@@ -25,9 +26,9 @@ public class Project implements Serializable {
 	// TODO create issue entity (one project - many issures)
 
 	// TODO create Project Leader (one to one)
+	@OneToOne
+	private Employee projectLeader;
 	
-	// TODO create Phase (one Phase hase many entries)
-
 	public Long getId() {
 		return id;
 	}
