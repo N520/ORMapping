@@ -14,6 +14,7 @@ import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,12 +22,25 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "discriminator", discriminatorType = DiscriminatorType.STRING)
-@DiscriminatorValue("E")
-public abstract class Employee implements Serializable {
+// v1 table per class hierachy
+ @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+ @DiscriminatorColumn(name = "discriminator", discriminatorType =
+ DiscriminatorType.STRING)
+ @DiscriminatorValue("E")
+
+// v2 Table per concrete class
+//@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+
+// v3 table per subclass
+// @Inheritance(strategy = InheritanceType.JOINED)
+public class Employee implements Serializable {
 
 	private static final long serialVersionUID = 4982742211001582409L;
 	@Id
@@ -34,22 +48,34 @@ public abstract class Employee implements Serializable {
 	private Long id;
 	private String firstName;
 	private String lastName;
+
+	@Temporal(TemporalType.DATE)
 	private Date dateOfBirth;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "employee")
+	// fetching strategies:
+	// [FetchMode.JOIN] FetchType.EAGER 1 join, eager fetch
+	// FetchMode.SELECT FetchType.EAGER 2 selects, eager fetch
+	// [FetchMode.SELECT] [FetchType.LAZY] 2 selects, lazy fetch
+	// FetchMode.JOIN [FetchType.LAZY] contradictory
+	// OneToMany: default fetch strategy: LAZY
+	@Fetch(FetchMode.JOIN)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "employee", fetch = FetchType.EAGER)
 	private Set<LogbookEntry> logBookentries = new HashSet<>();
-	
+	// v1
+	// when no annotation give Address is serialized (if serzializabel)
+	// v2
+	// address is Embedded in address column
 	@Embedded
 	@AttributeOverrides({ @AttributeOverride(name = "zipCode", column = @Column(name = "adress_zipCode")) })
-
+	// v3
+	// seperate Table
+	// @OnetoOne
 	private Address address;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(mappedBy = "members", cascade = CascadeType.ALL)
 	private Set<Project> projects = new HashSet<>();
 
-	@OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<Issue> issues = new HashSet<>();
-
+	// Classes persisted with Hibernate must have default constructor
 	public Employee() {
 
 	}
@@ -58,11 +84,6 @@ public abstract class Employee implements Serializable {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.dateOfBirth = dateOfBirth;
-	}
-
-	public Employee(String firstName, String lastName, Date dateOfBirth, Address address) {
-		this(firstName, lastName, dateOfBirth);
-		this.address = address;
 	}
 
 	public Address getAddress() {
@@ -117,8 +138,6 @@ public abstract class Employee implements Serializable {
 	public void setProjects(Set<Project> projects) {
 		this.projects = projects;
 	}
-	
-	//TODO move these methods to corresponding daos?
 
 	public void addProject(Project project) {
 		if (project == null)
@@ -133,25 +152,13 @@ public abstract class Employee implements Serializable {
 		}
 
 		logBookentries.add(entry);
+		this.logBookentries.add(entry);
 		entry.setEmployee(this);
 	}
 
 	public void removeLogbookEntry(LogbookEntry entry) {
 		logBookentries.remove(entry);
 		entry.setEmployee(null);
-	}
-
-	public void removeIssue(Issue issue) {
-		issues.remove(issue);
-		issue.setEmployee(null);
-	}
-
-	public void addIssue(Issue issue) {
-		if (issue.getEmployee() != null)
-			issue.getEmployee().removeIssue(issue);
-
-		issues.add(issue);
-		issue.setEmployee(this);
 	}
 
 	@Override

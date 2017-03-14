@@ -2,6 +2,7 @@ package swt6.orm.domain;
 
 import java.io.Serializable;
 
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -14,43 +15,32 @@ import javax.persistence.Id;
  * @author Rainer
  *
  */
-@Entity
+@Embeddable
 public class Phase implements Serializable {
-
-	
-	private enum PhaseDescriptor {
-		ANALYSIS, IMPLEMENTATION, TEST, MAINTENANCE, OTHER
-	}
 
 	/**
 	 * auto generated
 	 */
 	private static final long serialVersionUID = 451225272398476213L;
 
-	@Id
-	@GeneratedValue
-	private Long id;
+	// private Long id;
 
-	@Enumerated(EnumType.STRING)
-	private PhaseDescriptor name;
+	// @Enumerated(EnumType.STRING)
+	private String name;
 
 	public Phase() {
 	}
 
-	public Long getId() {
-		return id;
+	public Phase(String name) {
+		super();
+		this.name = name;
 	}
 
-	@SuppressWarnings("unused")
-	private void setId(Long id) {
-		this.id = id;
-	}
-
-	public PhaseDescriptor getName() {
+	public String getName() {
 		return name;
 	}
 
-	public void setName(PhaseDescriptor name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 

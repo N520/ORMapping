@@ -8,7 +8,10 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 @Entity
@@ -23,12 +26,16 @@ public class Project implements Serializable {
 	@ManyToMany(cascade = CascadeType.ALL) // ????ß
 	private Set<Employee> members = new HashSet<>();
 
-	// TODO create issue entity (one project - many issures)
+	@OneToMany(mappedBy = "project")
+	private Set<Issue> issues = new HashSet<>();
 
-	// TODO create Project Leader (one to one)
-	@OneToOne
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "projectLead")
 	private Employee projectLeader;
-	
+
+	@OneToMany(mappedBy = "project")
+	private Set<Module> modules = new HashSet<>();
+
 	public Long getId() {
 		return id;
 	}
@@ -70,4 +77,50 @@ public class Project implements Serializable {
 	public String toString() {
 		return name;
 	}
+
+	public void addIssue(Issue issue) {
+		if (issue == null)
+			throw new IllegalArgumentException("issue must not be null");
+		issues.add(issue);
+		issue.setProject(this);
+	}
+
+	public void removeIssue(Issue issue) {
+		if (issue == null)
+			throw new IllegalArgumentException("issue must not be null");
+		issues.remove(issue);
+		issue.setProject(null);
+	}
+
+	public void addModule(Module module) {
+		if (module == null)
+			throw new IllegalArgumentException("module must not be null");
+		modules.add(module);
+		module.setProject(this);
+	}
+
+	public void removeModule(Module module) {
+		if (module == null)
+			throw new IllegalArgumentException("module must not be null");
+		modules.remove(module);
+		module.setProject(null);
+
+	}
+
+	public Employee getProjectLeader() {
+		return projectLeader;
+	}
+
+	public void setProjectLeader(Employee projectLeader) {
+		this.projectLeader = projectLeader;
+	}
+
+	public Set<Module> getModules() {
+		return modules;
+	}
+
+	public void setModules(Set<Module> modules) {
+		this.modules = modules;
+	}
+
 }
