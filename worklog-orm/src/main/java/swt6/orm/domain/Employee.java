@@ -9,16 +9,24 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 @Entity
-public class Employee implements Serializable {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "discriminator", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue("E")
+public abstract class Employee implements Serializable {
 
 	private static final long serialVersionUID = 4982742211001582409L;
 	@Id
@@ -44,8 +52,8 @@ public class Employee implements Serializable {
 
 	@ManyToMany(cascade = CascadeType.ALL)
 	private Set<Project> projects = new HashSet<>();
-	
-	//TODO connect with issues (one employee many issues)
+
+	// TODO connect with issues (one employee many issues)
 
 	// Classes persisted with Hibernate must have default constructor
 	public Employee() {

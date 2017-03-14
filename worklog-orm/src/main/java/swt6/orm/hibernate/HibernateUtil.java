@@ -4,10 +4,13 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import swt6.orm.domain.Address;
 import swt6.orm.domain.Employee;
 import swt6.orm.domain.LogbookEntry;
+import swt6.orm.domain.PermanentEmployee;
 import swt6.orm.domain.Phase;
 import swt6.orm.domain.Project;
+import swt6.orm.domain.TemporaryEmployee;
 
 public class HibernateUtil {
 
@@ -27,6 +30,9 @@ public class HibernateUtil {
 			config.addAnnotatedClass(LogbookEntry.class);
 			config.addAnnotatedClass(Project.class);
 			config.addAnnotatedClass(Phase.class);
+			config.addAnnotatedClass(Address.class);
+			config.addAnnotatedClass(PermanentEmployee.class);
+			config.addAnnotatedClass(TemporaryEmployee.class);
 			sessionFactory = config.buildSessionFactory();
 
 		}
