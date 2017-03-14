@@ -3,27 +3,33 @@ package swt6.orm.domain;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 @Entity
 public class LogbookEntry implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	private String activity;
 	private Date startTime;
 	private Date endTime;
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, optional = false)
 	private Employee employee;
 
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@Embedded
+	@AttributeOverrides({ @AttributeOverride(name = "name", column = @Column(name = "Phase")) })
 	private Phase phase;
+
+	@ManyToOne(optional = false)
+	private Module module;
 
 	public LogbookEntry() {
 
@@ -36,14 +42,6 @@ public class LogbookEntry implements Serializable {
 	@SuppressWarnings("unused")
 	private void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getActivity() {
-		return activity;
-	}
-
-	public void setActivity(String activity) {
-		this.activity = activity;
 	}
 
 	public Date getStartTime() {
@@ -82,11 +80,7 @@ public class LogbookEntry implements Serializable {
 		this.employee = employee;
 	}
 
-	public void detachEmployee() {
-		// v1
-		// attachEmployee(null);
-
-		// v2
+	public void detachEmployee() {	
 		if (this.employee != null) {
 			this.employee.removeLogbookEntry(this);
 		}
@@ -94,16 +88,31 @@ public class LogbookEntry implements Serializable {
 
 	}
 
-	public LogbookEntry(String activity, Date startTime, Date endTime, Employee employee) {
-		this.activity = activity;
+	public LogbookEntry(Date startTime, Date endTime, Employee employee) {
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.employee = employee;
 	}
 
+	public Phase getPhase() {
+		return phase;
+	}
+
+	public void setPhase(Phase phase) {
+		this.phase = phase;
+	}
+
 	@Override
 	public String toString() {
-		return activity + ": " + startTime + " - " + endTime + " (" + employee.getLastName() + ")";
+		return phase.getName() + ": " + startTime + " - " + endTime + " (" + employee.getLastName() + ")";
+	}
+
+	public Module getModule() {
+		return module;
+	}
+
+	public void setModule(Module module) {
+		this.module = module;
 	}
 
 	private static final long serialVersionUID = 8497603996267190243L;

@@ -2,21 +2,19 @@ package swt6.orm.domain;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-
-//TODO make own entity with zipcode & street as key
-//v2
 @Embeddable
 
-// v3
-// add @entity and @id for id
 public class Address implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	// private Long id;
+	@Column(nullable = false)
 	private String zipCode;
+	@Column(nullable = false)
 	private String city;
+	@Column(nullable = false)
 	private String street;
 
 	public Address() {
@@ -27,14 +25,6 @@ public class Address implements Serializable {
 		this.city = city;
 		this.street = street;
 	}
-
-	// public Long getId() {
-	// return id;
-	// }
-	//
-	// public void setId(Long id) {
-	// this.id = id;
-	// }
 
 	public String getCity() {
 		return city;
