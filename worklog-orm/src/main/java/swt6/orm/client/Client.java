@@ -27,8 +27,6 @@ public class Client {
 			Employee empl2 = dal.saveEmployee(new TemporaryEmployee("Jane", "Doe", new Date(),
 					new Address("4300", "somewhre", "over the rainbow"), "renting agency", 100.0, new Date(),
 					DateUtil.getDate(2018, 01, 01)));
-			
-			
 
 			System.out.println(empl1);
 
@@ -48,21 +46,33 @@ public class Client {
 			System.out.println("finding al temporary Employees");
 			dal.findAllTemporaryEmployees().forEach(System.out::println);
 
-			
-			
 			System.out.println("------------ PROJECT STUFF ---------------");
-			
-			Project p = new Project("testproject1", empl1);
+
+			Project p = dal.saveProject(new Project("testproject1", empl1));
 
 			p = dal.addEmployeeToProject(empl1, p);
 			p = dal.addEmployeeToProject(empl2, p);
-//			
-			
-			
-//			 p.addModule(new Module("module for p1", p));
+			//
 
+			p = dal.saveProject(p);
+
+			Module m = dal.saveModule(new Module("module for p1"));
+
+			p = dal.addModuleToProject(m, p);
+			m = dal.findModuleById(m.getId());
+			
+			dal.findAllModules().stream().forEach(System.err::println);
+			;
+
+			p = dal.removeModuleFromProject(m, p);
+			dal.findAllModules().stream().forEach(System.err::println);
+			;
+
+			p = dal.saveProject(p);
 
 			System.out.println("------------ REMOVING EMPLOYEE ---------------");
+
+			p = dal.removeEmployeeFromProject(empl1, p);
 
 			p = dal.findAllProjects().iterator().next();
 			dal.findAllProjects().forEach(System.out::println);
@@ -74,7 +84,7 @@ public class Client {
 			System.out.println(issue);
 
 			dal.assignEmployeeToIssue(empl2, issue);
-			
+
 			System.out.println(issue);
 
 			System.out.println("------------ ISSUE FILTER---------------");
@@ -83,10 +93,10 @@ public class Client {
 
 			System.out.println("------------ ISSUE DELETION ---------------");
 
-//			dal.findAllIssues().forEach(i -> dal.deleteIssue(i));
+			// dal.findAllIssues().forEach(i -> dal.deleteIssue(i));
 
 			dal.findAllIssuesWithState(IssueType.NEW).forEach(System.out::println);
-			
+
 		}
 
 	}

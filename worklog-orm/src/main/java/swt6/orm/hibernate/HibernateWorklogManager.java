@@ -103,8 +103,8 @@ public class HibernateWorklogManager {
 
 			Issue issue = new Issue(IssueType.NEW, PriorityType.NORMAL, 0, null, p1);
 
-			Module mod1 = new Module("part1", p1);
-			Module mod2 = new Module("part1.1", p2);
+//			Module mod1 = new Module("part1", p1);
+//			Module mod2 = new Module("part1.1", p2);
 
 			// issue = saveEntity(issue);
 
@@ -123,8 +123,8 @@ public class HibernateWorklogManager {
 			empl2 = assignProjectsToEmployee(empl2, empl1, p2);
 
 			System.out.println("------ add modules to LogBooks--------");
-			entry1 = addModuleToEntry(entry1, mod1);
-			entry2 = addModuleToEntry(entry2, mod2);
+//			entry1 = addModuleToEntry(entry1, mod1);
+//			entry2 = addModuleToEntry(entry2, mod2);
 
 			System.out.println("------ addLogbookentries--------");
 

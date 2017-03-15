@@ -2,13 +2,13 @@ package swt6.orm.dao;
 
 import java.util.Collection;
 
-import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import swt6.orm.domain.Employee;
 import swt6.orm.domain.Issue;
 import swt6.orm.domain.IssueType;
+import swt6.orm.domain.Module;
 import swt6.orm.domain.PermanentEmployee;
 import swt6.orm.domain.Project;
 import swt6.orm.domain.TemporaryEmployee;
@@ -19,6 +19,7 @@ public class IssueTrackingDal implements AutoCloseable {
 	private EmployeeDao employeeDao = new EmployeeDaoImpl();
 	private IssueDao issueDao = new IssueDaoImpl();
 	private ProjectDao projectDao = new ProjectDaoImpl();
+	private ModuleDao moduleDao = new ModuleDaoImpl();
 
 	// EMPLOYEE STUFF
 	// ---------------------------------------------------------------
@@ -54,11 +55,10 @@ public class IssueTrackingDal implements AutoCloseable {
 		employeeDao.setSession(HibernateUtil.getCurrentSession());
 		projectDao.setSession(HibernateUtil.getCurrentSession());
 		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
-//		e = employeeDao.saveEmployee(e);
-		
-		
+		// e = employeeDao.saveEmployee(e);
+
 		for (Project p : e.getProjects()) {
-			
+
 			e.removeProject(p);
 			// persist project without employee
 			p = projectDao.saveProject(p);
@@ -137,9 +137,9 @@ public class IssueTrackingDal implements AutoCloseable {
 		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
 
 		issue = issueDao.updateEmployee(issue, employee);
-//		issue.attachEmployee(employee);
-//		employee = employeeDao.saveEmployee(employee);
-//		issue = issueDao.saveIssue(issue);
+		// issue.attachEmployee(employee);
+		// employee = employeeDao.saveEmployee(employee);
+		// issue = issueDao.saveIssue(issue);
 		tx.commit();
 	}
 
@@ -208,40 +208,100 @@ public class IssueTrackingDal implements AutoCloseable {
 		return projects;
 	}
 
-	// TODO add/remove Members
 	public Project addEmployeeToProject(Employee employee, Project project) {
 		projectDao.setSession(HibernateUtil.getCurrentSession());
 		employeeDao.setSession(HibernateUtil.getCurrentSession());
 		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
 
-		employee = employeeDao.saveEmployee(employee); 
+		// employee = employeeDao.saveEmployee(employee);
 		project = projectDao.addMember(project, employee);
-		employee = employeeDao.saveEmployee(employee); 
+		employee = employeeDao.saveEmployee(employee);
 		// project.addMember(employee);
-//		project = projectDao.saveProject(project);
+		// project = projectDao.saveProject(project);
 
 		tx.commit();
 		return project;
 	}
 
-	public Project removeEmployeeToProject(Employee employee, Project project) {
+	public Project removeEmployeeFromProject(Employee employee, Project project) {
 		projectDao.setSession(HibernateUtil.getCurrentSession());
+		employeeDao.setSession(HibernateUtil.getCurrentSession());
 		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
 
-		project.removeMember(employee);
-		project = projectDao.saveProject(project);
+		project = projectDao.removeMember(project, employee);
+		employee = employeeDao.saveEmployee(employee);
 
 		tx.commit();
 		return project;
 	}
+
 	// TODO update Lead
+
 	// TODO add/remove Modules (keep at least 1 module!)
+	public Project addModuleToProject(Module module, Project project) {
+		projectDao.setSession(HibernateUtil.getCurrentSession());
+		moduleDao.setSession(HibernateUtil.getCurrentSession());
+		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
+
+		project = projectDao.addModule(project, module);
+		module = moduleDao.saveModule(module);
+
+		tx.commit();
+		return project;
+	}
+
+	public Project removeModuleFromProject(Module module, Project project) {
+		projectDao.setSession(HibernateUtil.getCurrentSession());
+		moduleDao.setSession(HibernateUtil.getCurrentSession());
+		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
+
+		project = projectDao.removeModule(project, module);
+		module = moduleDao.saveModule(module);
+
+		tx.commit();
+		return project;
+	}
+
 	// TODO update Name
 	// TODO get issues of project by state
 	// TODO sum effort/progress of issues by state
 	// ---------------------------------------------------------------
 
+	// MODULE STUFF
+	// ---------------------------------------------------------------
+	public Module saveModule(Module module) {
+		moduleDao.setSession(HibernateUtil.getCurrentSession());
+		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
+
+		module = moduleDao.saveModule(module);
+
+		tx.commit();
+		return module;
+	}
+
+	public Collection<Module> findAllModules() {
+		moduleDao.setSession(HibernateUtil.getCurrentSession());
+		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
+		Collection<Module> modules = moduleDao.findAll();
+		tx.commit();
+
+		return modules;
+	}
+
+	public Module findModuleById(Long id) {
+
+		moduleDao.setSession(HibernateUtil.getCurrentSession());
+		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
+		Module module = moduleDao.findById(id);
+		tx.commit();
+
+		return module;
+	}
+
+	// ---------------------------------------------------------------
+
 	public void close() {
 		HibernateUtil.closeSessionFactory();
 	}
+
 }

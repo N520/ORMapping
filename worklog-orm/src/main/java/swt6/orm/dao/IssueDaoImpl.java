@@ -23,6 +23,7 @@ public class IssueDaoImpl extends AbstractDao implements IssueDao {
 
 	@Override
 	public Issue findById(Long id) {
+		checkSessionAvailable();
 		return session.get(Issue.class, id);
 
 	}

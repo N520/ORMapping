@@ -22,17 +22,16 @@ public class Module implements Serializable {
 
 	private String name;
 
-	@ManyToOne(optional = false)
+	@ManyToOne
 	private Project project;
 
 	public Module() {
 
 	}
 
-	public Module(String name, Project project) {
+	public Module(String name) {
 		super();
 		this.setName(name);
-		this.setProject(project);
 	}
 
 	public String getName() {
@@ -49,6 +48,10 @@ public class Module implements Serializable {
 
 	public void setProject(Project project) {
 		this.project = project;
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 }

@@ -39,7 +39,7 @@ public class Issue implements Serializable {
 	@Column(length = 3)
 	private int progress;
 
-	@ManyToOne( optional = true)
+	@ManyToOne(optional = true)
 	private Employee employee;
 
 	@ManyToOne(optional = false, cascade = CascadeType.MERGE)

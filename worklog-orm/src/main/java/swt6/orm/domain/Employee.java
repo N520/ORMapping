@@ -45,7 +45,7 @@ public abstract class Employee implements Serializable {
 
 	private Address address;
 
-	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "members")
+	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "members", fetch = FetchType.EAGER)
 	private Set<Project> projects = new HashSet<>();
 
 	@OneToMany(mappedBy = "employee", orphanRemoval = true, fetch = FetchType.EAGER)

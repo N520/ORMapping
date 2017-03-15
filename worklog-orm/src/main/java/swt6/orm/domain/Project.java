@@ -34,7 +34,7 @@ public class Project implements Serializable {
 	@JoinColumn(name = "projectLead")
 	private Employee projectLeader;
 
-	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	private Set<Module> modules = new HashSet<>();
 
 	public Long getId() {
@@ -83,6 +83,7 @@ public class Project implements Serializable {
 	public void removeMember(Employee empl) {
 		if (empl == null)
 			throw new IllegalArgumentException("employee must not be null");
+
 		empl.getProjects().remove(this);
 		this.members.remove(empl);
 	}
