@@ -7,6 +7,7 @@ import swt6.orm.domain.Address;
 import swt6.orm.domain.Employee;
 import swt6.orm.domain.Issue;
 import swt6.orm.domain.IssueType;
+import swt6.orm.domain.LogbookEntry;
 import swt6.orm.domain.Module;
 import swt6.orm.domain.PermanentEmployee;
 import swt6.orm.domain.PriorityType;
@@ -60,12 +61,11 @@ public class Client {
 
 			p = dal.addModuleToProject(m, p);
 
-//			p = dal.removeModuleFromProject(m, p);
+			// p = dal.removeModuleFromProject(m, p);
 
-			dal.deleteModule(m);
-			dal.findAllModules().forEach(System.err::println);
+			// dal.deleteModule(m);
+
 			p = dal.findProjectById(p.getId());
-			dal.findAllModules().forEach(System.err::println);
 			System.out.println("------------ REMOVING EMPLOYEE ---------------");
 
 			p = dal.removeEmployeeFromProject(empl1, p);
@@ -85,11 +85,20 @@ public class Client {
 
 			System.out.println("------------ ISSUE FILTER---------------");
 			dal.findAllIssuesWithState(IssueType.CLOSED).forEach(System.out::println);
-			;
+
+			System.out.println("------------ LOGBOOK STUFF ---------------");
+			LogbookEntry lb1 = new LogbookEntry(DateUtil.getTime(8, 0), DateUtil.getTime(18, 0));
+			lb1 = dal.createLogbookEntry(m, empl1, lb1);
+			// lb1 = dal.assignEmployeeToLogbookEntry(empl1, lb1);
+			// lb1.setModule(m);
+			// lb1 = dal.saveLogbookEntry(lb1);
+			empl1 = dal.findEmployeeById(empl1.getId());
+
+			 System.err.println(empl1.getLogBookentries());
 
 			System.out.println("------------ ISSUE DELETION ---------------");
 
-			// dal.findAllIssues().forEach(i -> dal.deleteIssue(i));
+			dal.findAllIssues().forEach(i -> dal.deleteIssue(i));
 
 			dal.findAllIssuesWithState(IssueType.NEW).forEach(System.out::println);
 

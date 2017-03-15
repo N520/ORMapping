@@ -9,6 +9,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,7 +22,7 @@ public class LogbookEntry implements Serializable {
 	private Long id;
 	private Date startTime;
 	private Date endTime;
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, optional = false)
+	@ManyToOne(cascade = { CascadeType.PERSIST}, optional = false, fetch = FetchType.EAGER)
 	private Employee employee;
 
 	@Embedded
@@ -88,10 +89,9 @@ public class LogbookEntry implements Serializable {
 
 	}
 
-	public LogbookEntry(Date startTime, Date endTime, Employee employee) {
+	public LogbookEntry(Date startTime, Date endTime) {
 		this.startTime = startTime;
 		this.endTime = endTime;
-		this.employee = employee;
 	}
 
 	public Phase getPhase() {

@@ -8,6 +8,7 @@ import org.hibernate.Transaction;
 import swt6.orm.domain.Employee;
 import swt6.orm.domain.Issue;
 import swt6.orm.domain.IssueType;
+import swt6.orm.domain.LogbookEntry;
 import swt6.orm.domain.Module;
 import swt6.orm.domain.PermanentEmployee;
 import swt6.orm.domain.Project;
@@ -20,6 +21,7 @@ public class IssueTrackingDal implements AutoCloseable {
 	private IssueDao issueDao = new IssueDaoImpl();
 	private ProjectDao projectDao = new ProjectDaoImpl();
 	private ModuleDao moduleDao = new ModuleDaoImpl();
+	private LogbookDao logbookDao = new LogBookDaoImpl();
 
 	// EMPLOYEE STUFF
 	// ---------------------------------------------------------------
@@ -137,9 +139,6 @@ public class IssueTrackingDal implements AutoCloseable {
 		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
 
 		issue = issueDao.updateEmployee(issue, employee);
-		// issue.attachEmployee(employee);
-		// employee = employeeDao.saveEmployee(employee);
-		// issue = issueDao.saveIssue(issue);
 		tx.commit();
 	}
 
@@ -158,7 +157,6 @@ public class IssueTrackingDal implements AutoCloseable {
 
 	// TODO set Issueprogress
 
-	// TODO get all issues with state
 	public Collection<Issue> findAllIssuesWithState(IssueType state) {
 		Session session = HibernateUtil.getCurrentSession();
 		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
@@ -173,14 +171,91 @@ public class IssueTrackingDal implements AutoCloseable {
 
 	// TODO get all issues with certain state and employee
 
+	// TODO get all issues with certain state of project
+
 	// ---------------------------------------------------------------
 
 	// LOGBOOK STUFF
 	// ---------------------------------------------------------------
 
-	// TODO new LogbookEntry
+	public LogbookEntry saveLogbookEntry(LogbookEntry logbookEntry) {
+		logbookDao.setSession(HibernateUtil.getCurrentSession());
+		employeeDao.setSession(HibernateUtil.getCurrentSession());
+		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
+
+		logbookEntry = logbookDao.saveLogbookEntry(logbookEntry);
+
+		tx.commit();
+		return logbookEntry;
+
+	}
+
+	public LogbookEntry findLogbookEntryById(Long id) {
+		logbookDao.setSession(HibernateUtil.getCurrentSession());
+		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
+		LogbookEntry entry = logbookDao.findById(id);
+		tx.commit();
+
+		return entry;
+	}
+
+	public Collection<LogbookEntry> findAllLogbookEntry() {
+		logbookDao.setSession(HibernateUtil.getCurrentSession());
+		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
+		Collection<LogbookEntry> employees = logbookDao.findAll();
+		tx.commit();
+
+		return employees;
+	}
+
+	public void deleteLogbookEntry(LogbookEntry lb) {
+		logbookDao.setSession(HibernateUtil.getCurrentSession());
+		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
+		// e = employeeDao.saveEmployee(e);
+
+		// TODO resolve relationships
+
+		lb = logbookDao.saveLogbookEntry(lb);
+		logbookDao.deleteEntry(lb);
+		tx.commit();
+	}
+
+	// public LogbookEntry assignEmployeeToLogbookEntry(Employee empl1,
+	// LogbookEntry lb) {
+	// logbookDao.setSession(HibernateUtil.getCurrentSession());
+	// employeeDao.setSession(HibernateUtil.getCurrentSession());
+	// Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
+	//
+	// lb = logbookDao.assignEmployee(lb, empl1);
+	// if (lb.getModule() == null)
+	// System.err.println(lb + " has no module thus it can't be saved, make sure
+	// to add a module first!");
+	// else {
+	// lb = logbookDao.saveLogbookEntry(lb);
+	// empl1 = saveEmployee(empl1);
+	// }
+	//
+	// tx.commit();
+	//
+	// return lb;
+	// }
+
+	public LogbookEntry createLogbookEntry(Module m, Employee e, LogbookEntry lb) {
+		logbookDao.setSession(HibernateUtil.getCurrentSession());
+		employeeDao.setSession(HibernateUtil.getCurrentSession());
+		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
+
+		lb.attachEmployee(e);
+		lb.setModule(m);
+
+		lb = logbookDao.saveLogbookEntry(lb);
+//		e = employeeDao.saveEmployee(e);
+
+		tx.commit();
+		return lb;
+	}
+
 	// TODO update Time For Entry
-	// TODO update Module
 	// TODO update Phase
 
 	// ---------------------------------------------------------------

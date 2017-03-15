@@ -37,7 +37,7 @@ public abstract class Employee implements Serializable {
 	private String lastName;
 	private Date dateOfBirth;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "employee")
+	@OneToMany(orphanRemoval = true, mappedBy = "employee", fetch = FetchType.EAGER)
 	private Set<LogbookEntry> logBookentries = new HashSet<>();
 
 	@Embedded

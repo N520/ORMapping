@@ -10,13 +10,13 @@ public class ProjectDaoImpl extends AbstractDao implements ProjectDao {
 
 	@Override
 	public Project findById(Long id) {
+		checkSessionAvailable();
 		return session.get(Project.class, id);
 	}
 
 	@Override
 	public Collection<Project> findAll() {
 		checkSessionAvailable();
-
 		return session.createQuery("from Project", Project.class).getResultList();
 	}
 
