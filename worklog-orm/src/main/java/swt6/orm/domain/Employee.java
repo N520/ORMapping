@@ -14,6 +14,7 @@ import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,16 +39,16 @@ public abstract class Employee implements Serializable {
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "employee")
 	private Set<LogbookEntry> logBookentries = new HashSet<>();
-	
+
 	@Embedded
 	@AttributeOverrides({ @AttributeOverride(name = "zipCode", column = @Column(name = "adress_zipCode")) })
 
 	private Address address;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "members")
 	private Set<Project> projects = new HashSet<>();
 
-	@OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "employee", orphanRemoval = true, fetch = FetchType.EAGER)
 	private Set<Issue> issues = new HashSet<>();
 
 	public Employee() {
@@ -117,7 +118,6 @@ public abstract class Employee implements Serializable {
 	public void setProjects(Set<Project> projects) {
 		this.projects = projects;
 	}
-	
 
 	public void addProject(Project project) {
 		if (project == null)
@@ -125,8 +125,13 @@ public abstract class Employee implements Serializable {
 		project.getMembers().add(this);
 		this.projects.add(project);
 	}
-	
-	
+
+	public void removeProject(Project project) {
+		if (project == null)
+			throw new IllegalArgumentException("project must not be null");
+		project.getMembers().remove(this);
+		this.projects.remove(project);
+	}
 
 	public void addLogbookEntry(LogbookEntry entry) {
 		if (entry.getEmployee() != null) {

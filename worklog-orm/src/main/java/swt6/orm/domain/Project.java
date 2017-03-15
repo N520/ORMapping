@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -23,17 +24,17 @@ public class Project implements Serializable {
 	private Long id;
 	private String name;
 
-	@ManyToMany(cascade = CascadeType.MERGE) // ????ß
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER) // ????ß
 	private Set<Employee> members = new HashSet<>();
 
-	@OneToMany(mappedBy = "project")
+	@OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
 	private Set<Issue> issues = new HashSet<>();
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "projectLead")
 	private Employee projectLeader;
 
-	@OneToMany(mappedBy = "project")
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
 	private Set<Module> modules = new HashSet<>();
 
 	public Long getId() {
@@ -45,6 +46,11 @@ public class Project implements Serializable {
 
 	public Project(String name) {
 		this.name = name;
+	}
+
+	public Project(String name, Employee lead) {
+		this(name);
+		projectLeader = lead;
 	}
 
 	public void setId(Long id) {
@@ -74,6 +80,13 @@ public class Project implements Serializable {
 		this.members.add(empl);
 	}
 
+	public void removeMember(Employee empl) {
+		if (empl == null)
+			throw new IllegalArgumentException("employee must not be null");
+		empl.getProjects().remove(this);
+		this.members.remove(empl);
+	}
+
 	public String toString() {
 		return name;
 	}
@@ -89,7 +102,9 @@ public class Project implements Serializable {
 		if (issue == null)
 			throw new IllegalArgumentException("issue must not be null");
 		issues.remove(issue);
-		issue.setProject(null);
+		// issue must never be null thus the reference is kept since it is only
+		// used while deleting issues
+		// issue.setProject(null);
 	}
 
 	public void addModule(Module module) {

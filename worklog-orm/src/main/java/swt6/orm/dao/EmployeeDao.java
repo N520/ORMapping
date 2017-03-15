@@ -2,6 +2,8 @@ package swt6.orm.dao;
 
 import java.util.Collection;
 
+import org.hibernate.query.Query;
+
 import swt6.orm.domain.Employee;
 import swt6.orm.domain.PermanentEmployee;
 import swt6.orm.domain.TemporaryEmployee;
@@ -9,8 +11,6 @@ import swt6.orm.domain.TemporaryEmployee;
 //TODO figure out how relationships should be handeled 
 public interface EmployeeDao extends Dao {
 	Employee saveEmployee(Employee employee);
-
-	boolean update(Employee employee);
 
 	Employee findById(Long id);
 
@@ -21,4 +21,7 @@ public interface EmployeeDao extends Dao {
 	Collection<PermanentEmployee> findAllPermanent();
 
 	Collection<TemporaryEmployee> findAllTemporary();
+
+	Collection<Employee> query(Query<Employee> query);
+
 }

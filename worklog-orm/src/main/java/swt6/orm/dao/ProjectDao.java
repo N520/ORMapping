@@ -2,6 +2,7 @@ package swt6.orm.dao;
 
 import java.util.Collection;
 
+import swt6.orm.domain.Employee;
 import swt6.orm.domain.Project;
 
 public interface ProjectDao extends Dao {
@@ -12,4 +13,6 @@ public interface ProjectDao extends Dao {
 	Project saveProject(Project project);
 
 	void delete(Project project);
+
+	Project addMember(Project project, Employee employee);
 }

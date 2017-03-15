@@ -11,7 +11,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.Filters;
+import org.hibernate.annotations.ParamDef;
+
 @Entity
+@FilterDef(name = "ISSUE_STATE_FILTER", parameters = @ParamDef(name = "state", type = "string"), defaultCondition = "state = (:state)")
+@Filters({ @Filter(name = "ISSUE_STATE_FILTER", condition = "state = :state"), })
 public class Issue implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -32,10 +39,10 @@ public class Issue implements Serializable {
 	@Column(length = 3)
 	private int progress;
 
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, optional = true)
+	@ManyToOne( optional = true)
 	private Employee employee;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, cascade = CascadeType.MERGE)
 	private Project project;
 
 	public Issue() {
@@ -125,12 +132,18 @@ public class Issue implements Serializable {
 	 * @param project
 	 */
 	public void moveToProject(Project project) {
+		if (project != null) {
+			project.addIssue(this);
+			this.project = project;
+		}
 		if (this.project != null)
 			this.project.removeIssue(this);
 
-		if (project != null)
-			project.addIssue(this);
-		this.project = project;
+	}
+
+	@Override
+	public String toString() {
+		return "issue " + state + " " + employee;
 	}
 
 }

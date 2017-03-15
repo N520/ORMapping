@@ -20,8 +20,6 @@ public interface IssueDao extends Dao {
 
 	void delete(Issue issue);
 
-	Collection<Issue> findByState(IssueType state);
-
 	Collection<Issue> query(Query<Issue> query);
 
 }
