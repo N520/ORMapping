@@ -73,7 +73,8 @@ public class HibernateWorklogManager {
 			HibernateUtil.getSessionFactory();
 
 			PermanentEmployee pe = new PermanentEmployee("Simon", "Schwarz", DateUtil.getDate(1994, 6, 21));
-			TemporaryEmployee te = new TemporaryEmployee("Simone", "Schwanz", DateUtil.getDate(1994, 6, 21));
+			TemporaryEmployee te = new TemporaryEmployee("Simone", "Schwanz", DateUtil.getDate(1994, 6, 21),
+					new Address("4242", "somewhere", "street 1"));
 			pe.setAddress(new Address("4242", "somewhere", "street 1"));
 
 			pe.setSalary(5000);
@@ -94,8 +95,8 @@ public class HibernateWorklogManager {
 			LogbookEntry entry2 = new LogbookEntry(DateUtil.getTime(10, 15), DateUtil.getTime(15, 30), null);
 			//
 			//
-			entry1.setPhase(new Phase("Analysis"));
-			entry2.setPhase(new Phase("IMPLEMENTATION"));
+//			entry1.setPhase(new Phase("Analysis"));
+//			entry2.setPhase(new Phase("IMPLEMENTATION"));
 
 			Project p1 = new Project("Office");
 			Project p2 = new Project("EnterpriseServer");
@@ -120,9 +121,7 @@ public class HibernateWorklogManager {
 
 			empl1 = assignProjectsToEmployee(empl1, empl1, p1);
 			empl2 = assignProjectsToEmployee(empl2, empl1, p2);
-			
-			
-			
+
 			System.out.println("------ add modules to LogBooks--------");
 			entry1 = addModuleToEntry(entry1, mod1);
 			entry2 = addModuleToEntry(entry2, mod2);
@@ -131,8 +130,6 @@ public class HibernateWorklogManager {
 
 			empl1 = addLogbookentries(empl1, entry1);
 			empl2 = addLogbookentries(empl2, entry2);
-
-
 
 			listEmployees();
 			empl1 = addIssues(empl1, issue);

@@ -118,7 +118,6 @@ public abstract class Employee implements Serializable {
 		this.projects = projects;
 	}
 	
-	//TODO move these methods to corresponding daos?
 
 	public void addProject(Project project) {
 		if (project == null)
@@ -126,6 +125,8 @@ public abstract class Employee implements Serializable {
 		project.getMembers().add(this);
 		this.projects.add(project);
 	}
+	
+	
 
 	public void addLogbookEntry(LogbookEntry entry) {
 		if (entry.getEmployee() != null) {

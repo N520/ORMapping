@@ -25,23 +25,28 @@ public class Phase implements Serializable {
 
 	// private Long id;
 
-	// @Enumerated(EnumType.STRING)
-	private String name;
+	@Enumerated(EnumType.STRING)
+	private PhaseDescriptor name;
 
 	public Phase() {
 	}
 
-	public Phase(String name) {
+	public Phase(PhaseDescriptor name) {
 		super();
 		this.name = name;
 	}
 
-	public String getName() {
+	public PhaseDescriptor getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(PhaseDescriptor name) {
 		this.name = name;
+	}
+
+	@Override
+	public String toString() {
+		return name.toString();
 	}
 
 }

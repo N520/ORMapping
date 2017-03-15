@@ -6,10 +6,12 @@ import java.util.List;
 import org.hibernate.Session;
 
 import swt6.orm.domain.Employee;
+import swt6.orm.domain.PermanentEmployee;
+import swt6.orm.domain.TemporaryEmployee;
 
 public class EmployeeDaoImpl extends AbstractDao implements EmployeeDao {
 
-	public Employee insert(Employee employee) {
+	public Employee saveEmployee(Employee employee) {
 		checkSessionAvailable();
 		return saveEntity(employee);
 
@@ -42,7 +44,18 @@ public class EmployeeDaoImpl extends AbstractDao implements EmployeeDao {
 	public void delete(Employee employee) {
 		checkSessionAvailable();
 		deleteEntity(employee);
+	}
 
+	@Override
+	public Collection<PermanentEmployee> findAllPermanent() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Collection<TemporaryEmployee> findAllTemporary() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

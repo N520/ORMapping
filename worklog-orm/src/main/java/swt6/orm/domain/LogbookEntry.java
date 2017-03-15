@@ -28,7 +28,7 @@ public class LogbookEntry implements Serializable {
 	@AttributeOverrides({ @AttributeOverride(name = "name", column = @Column(name = "Phase")) })
 	private Phase phase;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Module module;
 
 	public LogbookEntry() {
@@ -80,7 +80,7 @@ public class LogbookEntry implements Serializable {
 		this.employee = employee;
 	}
 
-	public void detachEmployee() {	
+	public void detachEmployee() {
 		if (this.employee != null) {
 			this.employee.removeLogbookEntry(this);
 		}

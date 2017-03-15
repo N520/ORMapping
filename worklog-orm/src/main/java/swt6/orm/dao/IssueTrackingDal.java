@@ -11,11 +11,13 @@ public class IssueTrackingDal {
 
 	private EmployeeDao dao = new EmployeeDaoImpl();
 
+	// EMPLOYEE STUFF
+	// ---------------------------------------------------------------
 	public Employee saveEmployee(Employee e) {
 		dao.setSession(HibernateUtil.getCurrentSession());
 		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
 
-		e = dao.insert(e);
+		e = dao.saveEmployee(e);
 		tx.commit();
 		return e;
 
@@ -46,8 +48,47 @@ public class IssueTrackingDal {
 		dao.delete(e);
 		tx.commit();
 	}
-	
-	
+
+	// TODO getIssuesForEMpl
+	// ---------------------------------------------------------------
+
+	// ISSUESTUFF
+	// ---------------------------------------------------------------
+
+	// TODO setIssueState
+
+	// TODO set Issueeffort
+
+	// TODO set Issueprogress
+
+	// TODO get all issues with state
+
+	// TODO get all issues with certain state and employee
+
+	// ---------------------------------------------------------------
+
+	// LOGBOOK STUFF
+	// ---------------------------------------------------------------
+
+	// TODO new LogbookEntry
+	// TODO update Time For Entry
+	// TODO update Module
+	// TODO update Phase
+
+	// ---------------------------------------------------------------
+
+	// PROJECT STUFF
+	// ---------------------------------------------------------------
+
+	// TODO new Project
+	// TODO add/remove Members
+	// TODO update Lead
+	// TODO add/remove Modules (keep at least 1 module!)
+	// TODO update Name
+	// TODO get issues of project by state
+	// TODO sum effort/progress of issues by state
+	// ---------------------------------------------------------------
+
 	public void close() {
 		HibernateUtil.closeSessionFactory();
 	}

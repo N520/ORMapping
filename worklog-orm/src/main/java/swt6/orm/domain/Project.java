@@ -23,7 +23,7 @@ public class Project implements Serializable {
 	private Long id;
 	private String name;
 
-	@ManyToMany(cascade = CascadeType.ALL) // ????ß
+	@ManyToMany(cascade = CascadeType.MERGE) // ????ß
 	private Set<Employee> members = new HashSet<>();
 
 	@OneToMany(mappedBy = "project")
