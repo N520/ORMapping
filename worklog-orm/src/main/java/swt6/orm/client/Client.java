@@ -59,17 +59,13 @@ public class Client {
 			Module m = dal.saveModule(new Module("module for p1"));
 
 			p = dal.addModuleToProject(m, p);
-			m = dal.findModuleById(m.getId());
-			
-			dal.findAllModules().stream().forEach(System.err::println);
-			;
 
-			p = dal.removeModuleFromProject(m, p);
-			dal.findAllModules().stream().forEach(System.err::println);
-			;
+//			p = dal.removeModuleFromProject(m, p);
 
-			p = dal.saveProject(p);
-
+			dal.deleteModule(m);
+			dal.findAllModules().forEach(System.err::println);
+			p = dal.findProjectById(p.getId());
+			dal.findAllModules().forEach(System.err::println);
 			System.out.println("------------ REMOVING EMPLOYEE ---------------");
 
 			p = dal.removeEmployeeFromProject(empl1, p);

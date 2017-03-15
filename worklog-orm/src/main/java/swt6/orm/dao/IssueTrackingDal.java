@@ -198,6 +198,16 @@ public class IssueTrackingDal implements AutoCloseable {
 		return project;
 	}
 
+	public Project findProjectById(Long id) {
+		projectDao.setSession(HibernateUtil.getCurrentSession());
+		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
+
+		Project p = projectDao.findById(id);
+
+		tx.commit();
+		return p;
+	}
+
 	public Collection<Project> findAllProjects() {
 		projectDao.setSession(HibernateUtil.getCurrentSession());
 		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
@@ -237,7 +247,6 @@ public class IssueTrackingDal implements AutoCloseable {
 
 	// TODO update Lead
 
-	// TODO add/remove Modules (keep at least 1 module!)
 	public Project addModuleToProject(Module module, Project project) {
 		projectDao.setSession(HibernateUtil.getCurrentSession());
 		moduleDao.setSession(HibernateUtil.getCurrentSession());
@@ -257,7 +266,6 @@ public class IssueTrackingDal implements AutoCloseable {
 
 		project = projectDao.removeModule(project, module);
 		module = moduleDao.saveModule(module);
-
 		tx.commit();
 		return project;
 	}
@@ -298,6 +306,21 @@ public class IssueTrackingDal implements AutoCloseable {
 		return module;
 	}
 
+	public void deleteModule(Module m) {
+		moduleDao.setSession(HibernateUtil.getCurrentSession());
+		projectDao.setSession(HibernateUtil.getCurrentSession());
+		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
+		if (m.getProject() == null) {
+			moduleDao.delete(m);
+		} else {
+			Project p = m.getProject();
+			p = projectDao.removeModule(p, m);
+			m = moduleDao.saveModule(m);
+			moduleDao.delete(m);
+		}
+
+		tx.commit();
+	}
 	// ---------------------------------------------------------------
 
 	public void close() {

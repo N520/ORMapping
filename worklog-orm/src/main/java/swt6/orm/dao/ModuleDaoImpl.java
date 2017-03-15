@@ -33,7 +33,8 @@ public class ModuleDaoImpl extends AbstractDao implements ModuleDao {
 
 	@Override
 	public void delete(Module module) {
-		// TODO Auto-generated method stub
+		checkSessionAvailable();
+		deleteEntity(module);
 
 	}
 

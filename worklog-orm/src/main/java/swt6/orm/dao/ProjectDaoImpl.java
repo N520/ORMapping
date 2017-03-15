@@ -28,8 +28,8 @@ public class ProjectDaoImpl extends AbstractDao implements ProjectDao {
 
 	@Override
 	public void delete(Project project) {
-		// TODO Auto-generated method stub
-
+		checkSessionAvailable();
+		deleteEntity(project);
 	}
 
 	@Override

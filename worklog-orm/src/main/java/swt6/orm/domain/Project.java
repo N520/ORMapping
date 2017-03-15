@@ -34,7 +34,7 @@ public class Project implements Serializable {
 	@JoinColumn(name = "projectLead")
 	private Employee projectLeader;
 
-	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = false)
 	private Set<Module> modules = new HashSet<>();
 
 	public Long getId() {

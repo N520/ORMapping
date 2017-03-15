@@ -8,7 +8,6 @@ import swt6.orm.domain.Employee;
 import swt6.orm.domain.PermanentEmployee;
 import swt6.orm.domain.TemporaryEmployee;
 
-//TODO figure out how relationships should be handeled 
 public interface EmployeeDao extends Dao {
 	Employee saveEmployee(Employee employee);
 
