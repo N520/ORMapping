@@ -199,7 +199,7 @@ public class IssueTrackingDal implements AutoCloseable {
 		return entry;
 	}
 
-	public Collection<LogbookEntry> findAllLogbookEntry() {
+	public Collection<LogbookEntry> findAllLogbookEntries() {
 		logbookDao.setSession(HibernateUtil.getCurrentSession());
 		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
 		Collection<LogbookEntry> employees = logbookDao.findAll();
@@ -220,39 +220,29 @@ public class IssueTrackingDal implements AutoCloseable {
 		tx.commit();
 	}
 
-	// public LogbookEntry assignEmployeeToLogbookEntry(Employee empl1,
-	// LogbookEntry lb) {
-	// logbookDao.setSession(HibernateUtil.getCurrentSession());
-	// employeeDao.setSession(HibernateUtil.getCurrentSession());
-	// Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
-	//
-	// lb = logbookDao.assignEmployee(lb, empl1);
-	// if (lb.getModule() == null)
-	// System.err.println(lb + " has no module thus it can't be saved, make sure
-	// to add a module first!");
-	// else {
-	// lb = logbookDao.saveLogbookEntry(lb);
-	// empl1 = saveEmployee(empl1);
-	// }
-	//
-	// tx.commit();
-	//
-	// return lb;
-	// }
-
-	public LogbookEntry createLogbookEntry(Module m, Employee e, LogbookEntry lb) {
+	public LogbookEntry persistLogbookEntryWithData(Module m, Employee e, LogbookEntry lb) {
 		logbookDao.setSession(HibernateUtil.getCurrentSession());
 		employeeDao.setSession(HibernateUtil.getCurrentSession());
 		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
 
-		lb.attachEmployee(e);
+		lb.setEmployee(e);
 		lb.setModule(m);
 
 		lb = logbookDao.saveLogbookEntry(lb);
-//		e = employeeDao.saveEmployee(e);
 
 		tx.commit();
 		return lb;
+	}
+
+	public Collection<LogbookEntry> findLogbookEntriesForEmployee(Employee empl) {
+		logbookDao.setSession(HibernateUtil.getCurrentSession());
+		employeeDao.setSession(HibernateUtil.getCurrentSession());
+		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
+
+		Collection<LogbookEntry> entriesForEmployee = logbookDao.findForEmployee(empl);
+		
+		tx.commit();
+		return entriesForEmployee;
 	}
 
 	// TODO update Time For Entry

@@ -88,13 +88,15 @@ public class Client {
 
 			System.out.println("------------ LOGBOOK STUFF ---------------");
 			LogbookEntry lb1 = new LogbookEntry(DateUtil.getTime(8, 0), DateUtil.getTime(18, 0));
-			lb1 = dal.createLogbookEntry(m, empl1, lb1);
-			// lb1 = dal.assignEmployeeToLogbookEntry(empl1, lb1);
-			// lb1.setModule(m);
-			// lb1 = dal.saveLogbookEntry(lb1);
+			LogbookEntry lb2 = new LogbookEntry(DateUtil.getTime(8, 0), DateUtil.getTime(18, 0));
+			lb1 = dal.persistLogbookEntryWithData(m, empl1, lb1);
+			lb2 = dal.persistLogbookEntryWithData(m, empl1, lb2);
+
 			empl1 = dal.findEmployeeById(empl1.getId());
 
-			 System.err.println(empl1.getLogBookentries());
+			for (LogbookEntry lb : dal.findLogbookEntriesForEmployee(empl1)) {
+				System.out.println(lb.getId());
+			}
 
 			System.out.println("------------ ISSUE DELETION ---------------");
 

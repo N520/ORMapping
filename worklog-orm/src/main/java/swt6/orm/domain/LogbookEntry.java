@@ -22,7 +22,7 @@ public class LogbookEntry implements Serializable {
 	private Long id;
 	private Date startTime;
 	private Date endTime;
-	@ManyToOne(cascade = { CascadeType.PERSIST}, optional = false, fetch = FetchType.EAGER)
+	@ManyToOne(cascade = { CascadeType.PERSIST }, optional = false, fetch = FetchType.EAGER)
 	private Employee employee;
 
 	@Embedded
@@ -67,26 +67,6 @@ public class LogbookEntry implements Serializable {
 
 	public void setEmployee(Employee employee) {
 		this.employee = employee;
-	}
-
-	public void attachEmployee(Employee employee) {
-		// if this entry is linked to some employee remove this link.
-		if (this.employee != null)
-			this.employee.removeLogbookEntry(this);
-
-		// bidirectinal link between this entry and employee
-		if (employee != null) {
-			employee.addLogbookEntry(this);
-		}
-		this.employee = employee;
-	}
-
-	public void detachEmployee() {
-		if (this.employee != null) {
-			this.employee.removeLogbookEntry(this);
-		}
-		this.employee = null;
-
 	}
 
 	public LogbookEntry(Date startTime, Date endTime) {

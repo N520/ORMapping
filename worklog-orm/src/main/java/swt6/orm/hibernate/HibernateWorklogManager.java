@@ -195,7 +195,7 @@ public class HibernateWorklogManager {
 		empl = (Employee) session.merge(empl);
 
 		for (LogbookEntry entry : entries) {
-			empl.addLogbookEntry(entry);
+//			empl.addLogbookEntry(entry);
 		}
 
 		tx.commit();
@@ -249,10 +249,10 @@ public class HibernateWorklogManager {
 		System.out.println("###> Fetching Employee ...");
 		empl1 = session.get(Employee.class, emplId);
 		System.out.println("###> Fetched LogbookEtnry ...");
-		Set<LogbookEntry> entries = empl1.getLogBookentries();
+//		Set<LogbookEntry> entries = empl1.getLogBookentries();
 		System.out.println("###> Fetched associated entries...");
-		for (LogbookEntry e : entries)
-			System.out.println("  " + e);
+//		for (LogbookEntry e : entries)
+//			System.out.println("  " + e);
 		System.out.println("###> accessed associated entries...");
 		tx.commit();
 

@@ -37,12 +37,8 @@ public abstract class Employee implements Serializable {
 	private String lastName;
 	private Date dateOfBirth;
 
-	@OneToMany(orphanRemoval = true, mappedBy = "employee", fetch = FetchType.EAGER)
-	private Set<LogbookEntry> logBookentries = new HashSet<>();
-
 	@Embedded
 	@AttributeOverrides({ @AttributeOverride(name = "zipCode", column = @Column(name = "adress_zipCode")) })
-
 	private Address address;
 
 	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "members", fetch = FetchType.EAGER)
@@ -107,10 +103,6 @@ public abstract class Employee implements Serializable {
 		this.dateOfBirth = dateOfBirth;
 	}
 
-	public Set<LogbookEntry> getLogBookentries() {
-		return logBookentries;
-	}
-
 	public Set<Project> getProjects() {
 		return projects;
 	}
@@ -131,20 +123,6 @@ public abstract class Employee implements Serializable {
 			throw new IllegalArgumentException("project must not be null");
 		project.getMembers().remove(this);
 		this.projects.remove(project);
-	}
-
-	public void addLogbookEntry(LogbookEntry entry) {
-		if (entry.getEmployee() != null) {
-			entry.getEmployee().removeLogbookEntry(entry);
-		}
-
-		logBookentries.add(entry);
-		entry.setEmployee(this);
-	}
-
-	public void removeLogbookEntry(LogbookEntry entry) {
-		logBookentries.remove(entry);
-		entry.setEmployee(null);
 	}
 
 	public void removeIssue(Issue issue) {

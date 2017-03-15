@@ -50,7 +50,7 @@ public class LogBookDaoImpl extends AbstractDao implements LogbookDao {
 	@Override
 	public LogbookEntry assignEmployee(LogbookEntry lb, Employee empl1) {
 		checkSessionAvailable();
-		lb.attachEmployee(empl1);
+		lb.setEmployee(empl1);
 		return lb;
 	}
 
@@ -59,6 +59,14 @@ public class LogBookDaoImpl extends AbstractDao implements LogbookDao {
 		checkSessionAvailable();
 		lb.setModule(m);
 		return lb;
+	}
+
+	@Override
+	public Collection<LogbookEntry> findForEmployee(Employee e) {
+		checkSessionAvailable();
+		Query<LogbookEntry> query = session.createQuery("from LogbookEntry where employee=:empl", LogbookEntry.class);
+		query.setParameter("empl", e);
+		return query.getResultList();
 	}
 
 }
