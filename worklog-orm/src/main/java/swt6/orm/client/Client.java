@@ -107,7 +107,7 @@ public class Client {
 			// dal.findAllIssuesWithState(IssueType.NEW).forEach(System.out::println);
 
 			System.out.println("------------ ALL ISSUES OF PROJECT WITH STATE ---------------");
-			dal.findAllProjectIssueWithState(p, IssueType.CLOSED).forEach(System.out::println);
+			dal.findAllProjectIssuesWithState(p, IssueType.CLOSED).forEach(System.out::println);
 
 			System.out.println("------------ ALL EMPLOYEES WITH NAME ---------------");
 			dal.findEmployeesByName("jack").forEach(System.out::println);

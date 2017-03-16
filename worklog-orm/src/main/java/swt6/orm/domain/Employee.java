@@ -41,7 +41,7 @@ public abstract class Employee implements Serializable {
 	@AttributeOverrides({ @AttributeOverride(name = "zipCode", column = @Column(name = "adress_zipCode")) })
 	private Address address;
 
-	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "members", fetch = FetchType.EAGER)
+	@ManyToMany( mappedBy = "members", fetch = FetchType.EAGER)
 	private Set<Project> projects = new HashSet<>();
 
 	@OneToMany(mappedBy = "employee", orphanRemoval = true, fetch = FetchType.EAGER)

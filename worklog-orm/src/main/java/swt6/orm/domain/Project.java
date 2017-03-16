@@ -24,7 +24,7 @@ public class Project implements Serializable {
 	private Long id;
 	private String name;
 
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER) // ????ß
+	@ManyToMany(fetch = FetchType.EAGER) // ????ß
 	private Set<Employee> members = new HashSet<>();
 
 	@OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
@@ -84,8 +84,15 @@ public class Project implements Serializable {
 		if (empl == null)
 			throw new IllegalArgumentException("employee must not be null");
 
-		empl.getProjects().remove(this);
-		this.members.remove(empl);
+		for (Project p : empl.getProjects()) {
+			if (p.getId().equals(getId()))
+				empl.getProjects().remove(p);
+		}
+
+		for (Employee e : members) {
+			if (e.getId().equals(empl.getId()))
+				this.members.remove(e);
+		}
 	}
 
 	public String toString() {
@@ -118,7 +125,11 @@ public class Project implements Serializable {
 	public void removeModule(Module module) {
 		if (module == null)
 			throw new IllegalArgumentException("module must not be null");
-		modules.remove(module);
+		for (Module m : modules) {
+			if (m.getId().equals(module.getId()))
+				modules.remove(m);
+		}
+
 		module.setProject(null);
 
 	}

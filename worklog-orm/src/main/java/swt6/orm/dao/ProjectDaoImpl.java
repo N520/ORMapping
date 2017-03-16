@@ -48,7 +48,7 @@ public class ProjectDaoImpl extends AbstractDao implements ProjectDao {
 		checkSessionAvailable();
 
 		project.removeMember(employee);
-
+		
 		project = saveProject(project);
 
 		return project;
