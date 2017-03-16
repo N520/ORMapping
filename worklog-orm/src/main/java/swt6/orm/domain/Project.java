@@ -30,7 +30,7 @@ public class Project implements Serializable {
 	@OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
 	private Set<Issue> issues = new HashSet<>();
 
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "projectLead")
 	private Employee projectLeader;
 
@@ -95,14 +95,14 @@ public class Project implements Serializable {
 	public void addIssue(Issue issue) {
 		if (issue == null)
 			throw new IllegalArgumentException("issue must not be null");
-		issues.add(issue);
+		getIssues().add(issue);
 		issue.setProject(this);
 	}
 
 	public void removeIssue(Issue issue) {
 		if (issue == null)
 			throw new IllegalArgumentException("issue must not be null");
-		issues.remove(issue);
+		getIssues().remove(issue);
 		// issue must never be null thus the reference is kept since it is only
 		// used while deleting issues
 		// issue.setProject(null);
@@ -137,6 +137,14 @@ public class Project implements Serializable {
 
 	public void setModules(Set<Module> modules) {
 		this.modules = modules;
+	}
+
+	public Set<Issue> getIssues() {
+		return issues;
+	}
+
+	public void setIssues(Set<Issue> issues) {
+		this.issues = issues;
 	}
 
 }

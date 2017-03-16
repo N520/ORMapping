@@ -55,6 +55,7 @@ public class Issue implements Serializable {
 		this.progress = progress;
 		this.employee = employee;
 		this.project = project;
+		project.addIssue(this);
 	}
 
 	public IssueType getState() {

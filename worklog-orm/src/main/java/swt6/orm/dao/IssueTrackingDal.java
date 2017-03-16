@@ -66,6 +66,8 @@ public class IssueTrackingDal implements AutoCloseable {
 		for (Project p : e.getProjects()) {
 
 			e.removeProject(p);
+			if (e.getId().equals(p.getProjectLeader().getId()))
+				throw new RuntimeException(e + " is Leader of project " + p + " assign a new Leader before deleting");
 			// persist project without employee
 			p = projectDao.saveProject(p);
 		}
@@ -320,6 +322,15 @@ public class IssueTrackingDal implements AutoCloseable {
 
 		tx.commit();
 		return project;
+	}
+
+	public void deleteProject(Project p) {
+		projectDao.setSession(HibernateUtil.getCurrentSession());
+		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
+
+		projectDao.delete(p);
+
+		tx.commit();
 	}
 
 	public Project findProjectById(Long id) {
