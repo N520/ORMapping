@@ -10,6 +10,7 @@ import swt6.orm.domain.IssueType;
 import swt6.orm.domain.LogbookEntry;
 import swt6.orm.domain.Module;
 import swt6.orm.domain.PermanentEmployee;
+import swt6.orm.domain.PhaseDescriptor;
 import swt6.orm.domain.PriorityType;
 import swt6.orm.domain.Project;
 import swt6.orm.domain.TemporaryEmployee;
@@ -89,8 +90,8 @@ public class Client {
 			System.out.println("------------ LOGBOOK STUFF ---------------");
 			LogbookEntry lb1 = new LogbookEntry(DateUtil.getTime(8, 0), DateUtil.getTime(18, 0));
 			LogbookEntry lb2 = new LogbookEntry(DateUtil.getTime(8, 0), DateUtil.getTime(18, 0));
-			lb1 = dal.persistLogbookEntryWithData(m, empl1, lb1);
-			lb2 = dal.persistLogbookEntryWithData(m, empl1, lb2);
+			lb1 = dal.persistLogbookEntryWithData(m, empl1, PhaseDescriptor.ANALYSIS, lb1);
+			lb2 = dal.persistLogbookEntryWithData(m, empl1, PhaseDescriptor.IMPLEMENTATION, lb2);
 
 			empl1 = dal.findEmployeeById(empl1.getId());
 
@@ -98,11 +99,22 @@ public class Client {
 				System.out.println(lb.getId());
 			}
 
-			System.out.println("------------ ISSUE DELETION ---------------");
+			// System.out.println("------------ ISSUE DELETION
+			// ---------------");
+			//
+			// dal.findAllIssues().forEach(i -> dal.deleteIssue(i));
+			//
+			// dal.findAllIssuesWithState(IssueType.NEW).forEach(System.out::println);
 
-			dal.findAllIssues().forEach(i -> dal.deleteIssue(i));
+			System.out.println("------------ ALL ISSUES OF PROJECT WITH STATE ---------------");
+			dal.findAllProjectIssueWithState(p, IssueType.CLOSED).forEach(System.out::println);
 
-			dal.findAllIssuesWithState(IssueType.NEW).forEach(System.out::println);
+			System.out.println("------------ ALL EMPLOYEES WITH NAME ---------------");
+			dal.findEmployeesByName("jack").forEach(System.out::println);
+
+			System.out.println("------------ LOGBOOKENTRY DELETION ---------------");
+			dal.deleteLogbookEntry(lb2);
+			dal.findAllLogbookEntries().forEach(System.out::println);
 
 		}
 

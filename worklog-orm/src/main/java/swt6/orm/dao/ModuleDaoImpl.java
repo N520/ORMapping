@@ -40,8 +40,8 @@ public class ModuleDaoImpl extends AbstractDao implements ModuleDao {
 
 	@Override
 	public Collection<Module> query(Query<Module> query) {
-		// TODO Auto-generated method stub
-		return null;
+		checkSessionAvailable();
+		return query.getResultList();
 	}
 
 }

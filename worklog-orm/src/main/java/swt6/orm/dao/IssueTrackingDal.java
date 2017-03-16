@@ -1,9 +1,11 @@
 package swt6.orm.dao;
 
+import java.sql.Date;
 import java.util.Collection;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import swt6.orm.domain.Employee;
 import swt6.orm.domain.Issue;
@@ -11,6 +13,8 @@ import swt6.orm.domain.IssueType;
 import swt6.orm.domain.LogbookEntry;
 import swt6.orm.domain.Module;
 import swt6.orm.domain.PermanentEmployee;
+import swt6.orm.domain.Phase;
+import swt6.orm.domain.PhaseDescriptor;
 import swt6.orm.domain.Project;
 import swt6.orm.domain.TemporaryEmployee;
 import swt6.orm.hibernate.HibernateUtil;
@@ -95,23 +99,32 @@ public class IssueTrackingDal implements AutoCloseable {
 	 * @param Name
 	 * @return
 	 */
-	public Collection<Employee> findByName(String name) {
+	public Collection<Employee> findEmployeesByName(String name) {
 		employeeDao.setSession(HibernateUtil.getCurrentSession());
 		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
 
-		// TODO
-		// Query<Employee> query = new
-		// HibernateUtil().getCurrentSession().createQuery("")
-		// dao.query(query)
+		Query<Employee> query = HibernateUtil.getCurrentSession()
+				.createQuery("from Employee where firstname like :name or lastname like :name", Employee.class);
+		query.setParameter("name", "%" + name + "%");
+		Collection<Employee> employees = employeeDao.query(query);
 
 		tx.commit();
-		return null;
+		return employees;
 	}
 
 	// ---------------------------------------------------------------
 
 	// ISSUESTUFF
 	// ---------------------------------------------------------------
+
+	public Issue findIssueById(Long id) {
+		issueDao.setSession(HibernateUtil.getCurrentSession());
+		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
+		Issue issue = issueDao.findById(id);
+		tx.commit();
+
+		return issue;
+	}
 
 	public Collection<Issue> findAllIssues() {
 		issueDao.setSession(HibernateUtil.getCurrentSession());
@@ -133,13 +146,14 @@ public class IssueTrackingDal implements AutoCloseable {
 		return issue;
 	}
 
-	public void assignEmployeeToIssue(Employee employee, Issue issue) {
+	public Issue assignEmployeeToIssue(Employee employee, Issue issue) {
 		issueDao.setSession(HibernateUtil.getCurrentSession());
 		employeeDao.setSession(HibernateUtil.getCurrentSession());
 		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
 
 		issue = issueDao.updateEmployee(issue, employee);
 		tx.commit();
+		return issue;
 	}
 
 	public void deleteIssue(Issue issue) {
@@ -151,27 +165,48 @@ public class IssueTrackingDal implements AutoCloseable {
 		tx.commit();
 	}
 
-	// TODO setIssueState
+	public Issue saveIssueEffort(Issue issue, IssueType state) {
+		issueDao.setSession(HibernateUtil.getCurrentSession());
+		issue.setState(state);
+		return saveIssue(issue);
+	}
 
-	// TODO set Issueeffort
+	public Issue saveIssueEffort(Issue issue, int effort) {
+		issueDao.setSession(HibernateUtil.getCurrentSession());
+		issue.setEffort(effort);
+		return saveIssue(issue);
+	}
 
-	// TODO set Issueprogress
+	public Issue saveIssueProgress(Issue issue, int progress) {
+		issueDao.setSession(HibernateUtil.getCurrentSession());
+		issue.setProgress(progress);
+		return saveIssue(issue);
+	}
 
 	public Collection<Issue> findAllIssuesWithState(IssueType state) {
 		Session session = HibernateUtil.getCurrentSession();
-		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
+		issueDao.setSession(session);
+		Transaction tx = session.beginTransaction();
 		session.enableFilter("ISSUE_STATE_FILTER").setParameter("state", state.toString());
 
-		issueDao.setSession(session);
 		Collection<Issue> issues = issueDao.findAll();
 
 		tx.commit();
 		return issues;
 	}
 
-	// TODO get all issues with certain state and employee
+	public Collection<Issue> findAllEmployeeIssuesWithState(Employee employee, IssueType state) {
+		Session session = HibernateUtil.getCurrentSession();
+		issueDao.setSession(session);
+		Transaction tx = session.beginTransaction();
+		session.enableFilter("ISSUE_STATE_FILTER").setParameter("state", state.toString());
+		Query<Issue> query = session.createQuery("from Issue where employee = :employee", Issue.class);
+		query.setParameter("employee", employee);
+		Collection<Issue> issues = issueDao.query(query);
 
-	// TODO get all issues with certain state of project
+		tx.commit();
+		return issues;
+	}
 
 	// ---------------------------------------------------------------
 
@@ -180,7 +215,6 @@ public class IssueTrackingDal implements AutoCloseable {
 
 	public LogbookEntry saveLogbookEntry(LogbookEntry logbookEntry) {
 		logbookDao.setSession(HibernateUtil.getCurrentSession());
-		employeeDao.setSession(HibernateUtil.getCurrentSession());
 		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
 
 		logbookEntry = logbookDao.saveLogbookEntry(logbookEntry);
@@ -214,19 +248,20 @@ public class IssueTrackingDal implements AutoCloseable {
 		// e = employeeDao.saveEmployee(e);
 
 		// TODO resolve relationships
-
+		// lb.setModule(null);
 		lb = logbookDao.saveLogbookEntry(lb);
 		logbookDao.deleteEntry(lb);
 		tx.commit();
 	}
 
-	public LogbookEntry persistLogbookEntryWithData(Module m, Employee e, LogbookEntry lb) {
+	public LogbookEntry persistLogbookEntryWithData(Module m, Employee e, Phase p, LogbookEntry lb) {
 		logbookDao.setSession(HibernateUtil.getCurrentSession());
 		employeeDao.setSession(HibernateUtil.getCurrentSession());
 		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
 
 		lb.setEmployee(e);
 		lb.setModule(m);
+		lb.setPhase(p);
 
 		lb = logbookDao.saveLogbookEntry(lb);
 
@@ -234,19 +269,43 @@ public class IssueTrackingDal implements AutoCloseable {
 		return lb;
 	}
 
+	public LogbookEntry persistLogbookEntryWithData(Module m, Employee e, PhaseDescriptor p, LogbookEntry lb) {
+		return persistLogbookEntryWithData(m, e, new Phase(p), lb);
+	}
+
+	// TODO save individual stuff (Employee, Phase, Module)
+
 	public Collection<LogbookEntry> findLogbookEntriesForEmployee(Employee empl) {
 		logbookDao.setSession(HibernateUtil.getCurrentSession());
 		employeeDao.setSession(HibernateUtil.getCurrentSession());
 		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
 
 		Collection<LogbookEntry> entriesForEmployee = logbookDao.findForEmployee(empl);
-		
+
 		tx.commit();
 		return entriesForEmployee;
 	}
 
-	// TODO update Time For Entry
-	// TODO update Phase
+	public LogbookEntry saveWorktimeForEntry(LogbookEntry lb, Date start, Date end) {
+		if (start == null)
+			throw new IllegalStateException("starttime must not be null");
+		if (lb.getEndTime() != null && end == null)
+			throw new IllegalStateException("a fixed endTime cannot be set null again");
+
+		lb.setStartTime(start);
+		lb.setEndTime(end);
+		return saveLogbookEntry(lb);
+	}
+
+	public LogbookEntry saveLogbookEntryPhase(LogbookEntry lb, Phase phase) {
+		lb.setPhase(phase);
+		return saveLogbookEntry(lb);
+	}
+
+	public LogbookEntry saveLogbookEntryPhase(LogbookEntry lb, PhaseDescriptor phase) {
+		lb.setPhase(new Phase(phase));
+		return saveLogbookEntry(lb);
+	}
 
 	// ---------------------------------------------------------------
 
@@ -310,7 +369,17 @@ public class IssueTrackingDal implements AutoCloseable {
 		return project;
 	}
 
-	// TODO update Lead
+	public Project saveProjectLead(Project project, Employee lead) {
+		projectDao.setSession(HibernateUtil.getCurrentSession());
+		project.setProjectLeader(lead);
+		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
+
+		project = projectDao.saveProject(project);
+
+		tx.commit();
+		return project;
+
+	}
 
 	public Project addModuleToProject(Module module, Project project) {
 		projectDao.setSession(HibernateUtil.getCurrentSession());
@@ -335,8 +404,26 @@ public class IssueTrackingDal implements AutoCloseable {
 		return project;
 	}
 
-	// TODO update Name
-	// TODO get issues of project by state
+	public Project saveProjectName(Project project, String name) {
+		project.setName(name);
+		return saveProject(project);
+	}
+
+	public Collection<Issue> findAllProjectIssueWithState(Project project, IssueType state) {
+		issueDao.setSession(HibernateUtil.getCurrentSession());
+		Transaction tx = HibernateUtil.getCurrentSession().beginTransaction();
+		HibernateUtil.getCurrentSession().enableFilter("ISSUE_STATE_FILTER").setParameter("state", state.toString());
+
+		Query<Issue> query = HibernateUtil.getCurrentSession().createQuery("from Issue where project = :project",
+				Issue.class);
+		query.setParameter("project", project);
+
+		Collection<Issue> issues = issueDao.query(query);
+		tx.commit();
+
+		return issues;
+
+	}
 	// TODO sum effort/progress of issues by state
 	// ---------------------------------------------------------------
 

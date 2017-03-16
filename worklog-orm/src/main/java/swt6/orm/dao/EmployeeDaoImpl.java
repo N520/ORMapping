@@ -60,6 +60,7 @@ public class EmployeeDaoImpl extends AbstractDao implements EmployeeDao {
 
 	@Override
 	public Collection<Employee> query(Query<Employee> query) {
+		checkSessionAvailable();
 		return query.getResultList();
 	}
 

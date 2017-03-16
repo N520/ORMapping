@@ -20,6 +20,7 @@ public class LogbookEntry implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
+	@Column(nullable = false)
 	private Date startTime;
 	private Date endTime;
 	@ManyToOne(cascade = { CascadeType.PERSIST }, optional = false, fetch = FetchType.EAGER)
@@ -27,6 +28,7 @@ public class LogbookEntry implements Serializable {
 
 	@Embedded
 	@AttributeOverrides({ @AttributeOverride(name = "name", column = @Column(name = "Phase")) })
+	@Column(nullable = false)
 	private Phase phase;
 
 	@ManyToOne(optional = false, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
@@ -84,7 +86,7 @@ public class LogbookEntry implements Serializable {
 
 	@Override
 	public String toString() {
-		return phase.getName() + ": " + startTime + " - " + endTime + " (" + employee.getLastName() + ")";
+		return getPhase() + ": " + getStartTime() + " - " + getEndTime() + " (" + getEmployee() + ")";
 	}
 
 	public Module getModule() {

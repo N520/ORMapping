@@ -2,12 +2,10 @@ package swt6.orm.domain;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 
 /**
  * untested Code
@@ -25,10 +23,12 @@ public class Phase implements Serializable {
 
 	// private Long id;
 
+	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private PhaseDescriptor name;
 
 	public Phase() {
+		name = PhaseDescriptor.OTHER;
 	}
 
 	public Phase(PhaseDescriptor name) {
