@@ -1,6 +1,7 @@
 package swt6.orm.client;
 
 import java.util.Date;
+import java.util.Map;
 
 import swt6.orm.dao.IssueTrackingDal;
 import swt6.orm.domain.Address;
@@ -10,19 +11,20 @@ import swt6.orm.domain.IssueType;
 import swt6.orm.domain.LogbookEntry;
 import swt6.orm.domain.Module;
 import swt6.orm.domain.PermanentEmployee;
+import swt6.orm.domain.Phase;
 import swt6.orm.domain.PhaseDescriptor;
 import swt6.orm.domain.PriorityType;
 import swt6.orm.domain.Project;
 import swt6.orm.domain.TemporaryEmployee;
+import swt6.orm.hibernate.HibernateUtil;
 import swt6.util.DateUtil;
 
-//TODO Unittests
 public class Client {
 
 	public static void main(String[] args) {
 
 		try (IssueTrackingDal dal = new IssueTrackingDal()) {
-
+			HibernateUtil.setConfigFile("hibernate.cfg2.xml");
 			Employee empl1 = dal.saveEmployee(new PermanentEmployee("John", "Doe", new Date(),
 					new Address("4300", "somewhre", "over the rainbow"), 5000));
 
@@ -69,7 +71,7 @@ public class Client {
 			p = dal.findProjectById(p.getId());
 			System.out.println("------------ REMOVING EMPLOYEE ---------------");
 
-			p = dal.removeEmployeeFromProject(empl1, p);
+//			p = dal.removeEmployeeFromProject(empl1, p);
 
 			p = dal.findAllProjects().iterator().next();
 			dal.findAllProjects().forEach(System.out::println);
@@ -115,6 +117,17 @@ public class Client {
 			System.out.println("------------ LOGBOOKENTRY DELETION ---------------");
 			dal.deleteLogbookEntry(lb2);
 			dal.findAllLogbookEntries().forEach(System.out::println);
+
+			LogbookEntry lb3 = new LogbookEntry(new Date(), null);
+			dal.persistLogbookEntryWithData(m, empl1, PhaseDescriptor.ANALYSIS, lb3);
+			Issue i2 = dal.saveIssue(new Issue(IssueType.NEW, PriorityType.LOW, 0, empl1, p));
+			i2 = dal.saveIssueEffort(i2, 10);
+			Map<Phase, Integer> map = dal.getWorkTimeOnProjectByPhase(p);
+			System.out.println(map);
+
+			System.out.println(dal.getSumEmployeeEffortByState(empl1, IssueType.NEW));
+
+			System.out.println(dal.getWorkTimeOfEmployeeOnProjectByState(empl1, p, IssueType.NEW));
 
 		}
 

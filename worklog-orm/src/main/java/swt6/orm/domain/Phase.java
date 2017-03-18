@@ -48,5 +48,18 @@ public class Phase implements Serializable {
 	public String toString() {
 		return name.toString();
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Phase))
+			return false;
+		Phase p = (Phase) obj;
+		return p.getName().equals(this.getName());
+	}
+	
+	@Override
+	public int hashCode() {
+		return getName().hashCode();
+	}
 
 }

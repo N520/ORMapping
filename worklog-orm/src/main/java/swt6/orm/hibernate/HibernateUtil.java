@@ -19,6 +19,12 @@ public class HibernateUtil {
 	private static SessionFactory sessionFactory;
 	private static Session session;
 
+	private static String configFile = "";
+
+	public static void setConfigFile(String configFile) {
+		HibernateUtil.configFile = configFile;
+	}
+
 	/**
 	 * creating a sessionFactory is timeconsuming, thus this should be done only
 	 * once per database using this method
@@ -27,7 +33,13 @@ public class HibernateUtil {
 	 */
 	public static SessionFactory getSessionFactory() {
 		if (sessionFactory == null) {
-			Configuration config = new Configuration().configure();
+			Configuration config;
+			if (configFile.equals(""))
+				config = new Configuration().configure();
+			else
+				config = new Configuration().configure(configFile);
+				
+				
 			config.addAnnotatedClass(Employee.class);
 			config.addAnnotatedClass(LogbookEntry.class);
 			config.addAnnotatedClass(Project.class);

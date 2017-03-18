@@ -1,9 +1,18 @@
 package swt6.orm.dao;
 
-import java.util.Date;
-import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Root;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -302,6 +311,114 @@ public class IssueTrackingDal implements AutoCloseable {
 		return issues;
 	}
 
+	public int getSumEmployeeEffortByState(Employee employee, IssueType state) {
+		return findAllEmployeeIssuesWithState(employee, state).stream().mapToInt(Issue::getEffort).sum();
+	}
+
+
+
+	public int getWorkTimeOfEmployeeOnProjectByState(Employee employee, Project project, IssueType state) {
+		Session session = HibernateUtil.getCurrentSession();
+		issueDao.setSession(session);
+		Transaction tx = null;
+		int workTime = 0;
+		try {
+			tx = session.beginTransaction();
+			session.enableFilter("ISSUE_STATE_FILTER").setParameter("state", state.toString());
+			CriteriaBuilder cb = session.getCriteriaBuilder();
+			CriteriaQuery<Issue> allIssuesQuery = cb.createQuery(Issue.class);
+			Root<Project> rootLe = allIssuesQuery.from(Project.class);
+			Root<Issue> rootI = allIssuesQuery.from(Issue.class);
+			ParameterExpression<Employee> employeeParam = cb.parameter(Employee.class);
+
+			allIssuesQuery.select(rootLe.get("issues")).where(cb.equal(rootI.get("employee"), employeeParam));
+
+			Query<Issue> query = session.createQuery(allIssuesQuery);
+			query.setParameter(employeeParam, employee);
+
+			workTime = query.stream().filter(e -> e.getEmployee().getId().equals(employee.getId()))
+					.mapToInt(Issue::getEffort).sum();
+
+			tx.commit();
+		} catch (Exception e) {
+			if (tx != null)
+				tx.rollback();
+			e.printStackTrace();
+		}
+		return workTime;
+	}
+
+	public Map<Phase, Integer> getWorkTimeOnProjectByPhase(Project project) {
+		Session session = HibernateUtil.getCurrentSession();
+		issueDao.setSession(session);
+		Transaction tx = null;
+		Map<Phase, Integer> l = new HashMap<>();
+		try {
+			tx = session.beginTransaction();
+			CriteriaBuilder cb = session.getCriteriaBuilder();
+			CriteriaQuery<LogbookEntry> allEntriesQuery = cb.createQuery(LogbookEntry.class);
+			Root<LogbookEntry> root = allEntriesQuery.from(LogbookEntry.class);
+			CriteriaQuery<LogbookEntry> entriesQuery = allEntriesQuery.select(root);
+			Query<LogbookEntry> q = session.createQuery(entriesQuery);
+
+			for (LogbookEntry lb : q.getResultList()) {
+				Employee e = lb.getEmployee();
+				for (Issue i : lb.getModule().getProject().getIssues()) {
+					if (i.getEmployee().getId().equals(e.getId())) {
+						if (l.containsKey(lb.getPhase()))
+							l.put(lb.getPhase(), l.get(lb.getPhase()) + i.getEffort());
+						else
+							l.put(lb.getPhase(), i.getEffort());
+					}
+				}
+			}
+
+			tx.commit();
+		} catch (Exception e) {
+			if (tx != null)
+				tx.rollback();
+			e.printStackTrace();
+		}
+		return l;
+	}
+
+	// TODO fix return type to Map
+//	public Number getWorkTimeOnProjectIssuesByState(Project project, IssueType state) {
+//		Session session = HibernateUtil.getCurrentSession();
+//		issueDao.setSession(session);
+//		Transaction tx = null;
+//		List<Object[]> l = new ArrayList<>();
+//		try {
+//			tx = session.beginTransaction();
+//			session.enableFilter("ISSUE_STATE_FILTER").setParameter("state", state.toString());
+//			CriteriaBuilder cb = session.getCriteriaBuilder();
+//			CriteriaQuery<Object[]> allEntriesQuery = cb.createQuery(Object[].class);
+//			Root<Issue> rootLe = allEntriesQuery.from(Issue.class);
+//
+//			allEntriesQuery.multiselect(rootLe.get("id"), cb.sum(rootLe.get("effort")));
+//
+//			allEntriesQuery.groupBy(rootLe.get("id"));
+//
+//			Query<Object[]> q = session.createQuery(allEntriesQuery);			
+//			
+//			l = q.getResultList();
+//			
+//			l.forEach(o -> {
+//				for (int i = 0; i < o.length; i++) {
+//					
+//				}
+//			});
+//
+//			tx.commit();
+//		} catch (Exception e) {
+//			if (tx != null)
+//				tx.rollback();
+//			e.printStackTrace();
+//		}
+//
+//		return (Number) l.get(0)[1];
+//	}
+//	
 	// ---------------------------------------------------------------
 
 	// LOGBOOK STUFF
@@ -636,9 +753,7 @@ public class IssueTrackingDal implements AutoCloseable {
 			e.printStackTrace();
 		}
 		return issues;
-
 	}
-	// TODO sum effort/progress of issues by state
 	// ---------------------------------------------------------------
 
 	// MODULE STUFF
