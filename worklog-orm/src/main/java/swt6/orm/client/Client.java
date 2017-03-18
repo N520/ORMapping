@@ -1,7 +1,6 @@
 package swt6.orm.client;
 
 import java.util.Date;
-import java.util.Map;
 
 import swt6.orm.dao.IssueTrackingDal;
 import swt6.orm.domain.Address;
@@ -11,7 +10,6 @@ import swt6.orm.domain.IssueType;
 import swt6.orm.domain.LogbookEntry;
 import swt6.orm.domain.Module;
 import swt6.orm.domain.PermanentEmployee;
-import swt6.orm.domain.Phase;
 import swt6.orm.domain.PhaseDescriptor;
 import swt6.orm.domain.PriorityType;
 import swt6.orm.domain.Project;
@@ -23,111 +21,135 @@ public class Client {
 
 	public static void main(String[] args) {
 
+		System.out.println("###### IssueTracking Console Client ######");
+
 		try (IssueTrackingDal dal = new IssueTrackingDal()) {
 			HibernateUtil.setConfigFile("hibernate.cfg2.xml");
+
+			System.out.println("------------ Creating Employees ---------------");
+			System.out.println("+++ start Transaction +++");
 			Employee empl1 = dal.saveEmployee(new PermanentEmployee("John", "Doe", new Date(),
 					new Address("4300", "somewhre", "over the rainbow"), 5000));
+			System.out.println("+++ end Transaction +++");
 
+			System.out.println("+++ start Transaction +++");
 			Employee empl2 = dal.saveEmployee(new TemporaryEmployee("Jane", "Doe", new Date(),
 					new Address("4300", "somewhre", "over the rainbow"), "renting agency", 100.0, new Date(),
 					DateUtil.getDate(2018, 01, 01)));
+			System.out.println("+++ end Transaction +++");
 
-			System.out.println(empl1);
+			System.out.println("+++ start Transaction +++");
+			Employee empl3 = dal.saveEmployee(new TemporaryEmployee("Samantha", "Fancypants", new Date(),
+					new Address("4300", "somewhre", "over the rainbow"), "renting agency", 100.0, new Date(),
+					DateUtil.getDate(2018, 01, 01)));
+			System.out.println("+++ end Transaction +++");
 
+			System.out.println("------------ Adjusting Employee Name ---------------");
 			empl1.setFirstName("jack");
-
+			System.out.println("+++ start Transaction +++");
 			empl1 = dal.saveEmployee(empl1);
+			System.out.println("+++ end Transaction +++");
 
-			System.out.println(empl1);
+			System.out.println("------------ Deleting Employee ---------------");
+			System.out.println("+++ start Transaction +++");
+			dal.deleteEmployee(empl3);
+			System.out.println("+++ end Transaction +++");
 
-			// dal.deleteEmployee(empl1);
-
+			System.out.println("------------ Printing all Employees ---------------");
+			System.out.println("+++ start Transaction +++");
 			dal.findAllEmployees().forEach(System.out::println);
+			System.out.println("+++ end Transaction +++");
 
-			System.out.println("finding al permanent Employees");
+			System.out.println("------------ Printing Permanent Employees ---------------");
+			System.out.println("+++ start Transaction +++");
+
 			dal.findAllPermanentEmployees().forEach(System.out::println);
+			System.out.println("+++ end Transaction +++");
 
-			System.out.println("finding al temporary Employees");
+			System.out.println("------------ Printing Temporary Employees ---------------");
+			System.out.println("+++ start Transaction +++");
+
 			dal.findAllTemporaryEmployees().forEach(System.out::println);
+			System.out.println("+++ end Transaction +++");
 
-			System.out.println("------------ PROJECT STUFF ---------------");
-
+			System.out.println("------------ CREATING Project ---------------");
+			System.out.println("+++ start Transaction +++");
 			Project p = dal.saveProject(new Project("testproject1", empl1));
+			System.out.println("+++ end Transaction +++");
+			System.out.println("+++ start Transaction +++");
+
+			System.out.println("------------ Adding Employees Project ---------------");
 
 			p = dal.addEmployeeToProject(empl1, p);
+			System.out.println("+++ end Transaction +++");
+			System.out.println("+++ start Transaction +++");
+
 			p = dal.addEmployeeToProject(empl2, p);
-			//
+			System.out.println("+++ end Transaction +++");
 
+			System.out.println("------------ Saving Project ---------------");
+			System.out.println("+++ startTransaction +++");
 			p = dal.saveProject(p);
+			System.out.println("+++ end Transaction +++");
 
+			System.out.println("------------ Creating Module---------------");
+			System.out.println("+++ startTransaction +++");
 			Module m = dal.saveModule(new Module("module for p1"));
+			System.out.println("+++ end Transaction +++");
 
+			System.out.println("------------ Adding Module ---------------");
+			System.out.println("+++ startTransaction +++");
 			p = dal.addModuleToProject(m, p);
+			System.out.println("+++ end Transaction +++");
 
-			// p = dal.removeModuleFromProject(m, p);
-
-			// dal.deleteModule(m);
-
+			System.out.println("------------ Get up to date project ---------------");
+			System.out.println("+++ start Transaction +++");
 			p = dal.findProjectById(p.getId());
-			System.out.println("------------ REMOVING EMPLOYEE ---------------");
+			System.out.println("+++ end Transaction +++");
 
-//			p = dal.removeEmployeeFromProject(empl1, p);
-
-			p = dal.findAllProjects().iterator().next();
-			dal.findAllProjects().forEach(System.out::println);
-
-			System.out.println("------------ ISSUE STUFF---------------");
+			System.out.println("------------ Create ISSUE ---------------");
+			System.out.println("+++ start Transaction +++");
 			Issue issue = new Issue(IssueType.NEW, PriorityType.NORMAL, 0, null, p);
 			issue = dal.saveIssue(issue);
+			System.out.println("+++ end Transaction +++");
 
-			System.out.println(issue);
-
+			System.out.println("------------ Assign Employee to ISSUE ---------------");
+			System.out.println("+++ start Transaction +++");
 			dal.assignEmployeeToIssue(empl2, issue);
-
-			System.out.println(issue);
+			System.out.println("+++ end Transaction +++");
 
 			System.out.println("------------ ISSUE FILTER---------------");
-			dal.findAllIssuesWithState(IssueType.CLOSED).forEach(System.out::println);
+			System.out.println("+++ start Transaction +++");
 
-			System.out.println("------------ LOGBOOK STUFF ---------------");
+			dal.findAllIssuesWithState(IssueType.CLOSED).forEach(System.out::println);
+			System.out.println("+++ end Transaction +++");
+
+			System.out.println("------------ LOGBOOK Creation ---------------");
 			LogbookEntry lb1 = new LogbookEntry(DateUtil.getTime(8, 0), DateUtil.getTime(18, 0));
 			LogbookEntry lb2 = new LogbookEntry(DateUtil.getTime(8, 0), DateUtil.getTime(18, 0));
+			System.out.println("+++ start Transaction +++");
+
 			lb1 = dal.persistLogbookEntryWithData(m, empl1, PhaseDescriptor.ANALYSIS, lb1);
+			System.out.println("+++ end Transaction +++");
+			System.out.println("+++ start Transaction +++");
 			lb2 = dal.persistLogbookEntryWithData(m, empl1, PhaseDescriptor.IMPLEMENTATION, lb2);
-
-			empl1 = dal.findEmployeeById(empl1.getId());
-
-			for (LogbookEntry lb : dal.findLogbookEntriesForEmployee(empl1)) {
-				System.out.println(lb.getId());
-			}
-
-			// System.out.println("------------ ISSUE DELETION
-			// ---------------");
-			//
-			// dal.findAllIssues().forEach(i -> dal.deleteIssue(i));
-			//
-			// dal.findAllIssuesWithState(IssueType.NEW).forEach(System.out::println);
+			System.out.println("+++ end Transaction +++");
 
 			System.out.println("------------ ALL ISSUES OF PROJECT WITH STATE ---------------");
+			System.out.println("+++ start Transaction +++");
+
 			dal.findAllProjectIssuesWithState(p, IssueType.CLOSED).forEach(System.out::println);
+			System.out.println("+++ end Transaction +++");
 
 			System.out.println("------------ ALL EMPLOYEES WITH NAME ---------------");
+			System.out.println("+++ start Transaction +++");
 			dal.findEmployeesByName("jack").forEach(System.out::println);
+			System.out.println("+++ end Transaction +++");
 
 			System.out.println("------------ LOGBOOKENTRY DELETION ---------------");
+			System.out.println("+++ start Transaction +++");
 			dal.deleteLogbookEntry(lb2);
-			dal.findAllLogbookEntries().forEach(System.out::println);
-
-			LogbookEntry lb3 = new LogbookEntry(new Date(), null);
-			dal.persistLogbookEntryWithData(m, empl1, PhaseDescriptor.ANALYSIS, lb3);
-			Issue i2 = dal.saveIssue(new Issue(IssueType.NEW, PriorityType.LOW, 0, empl1, p));
-			i2 = dal.saveIssueEffort(i2, 10);
-			Map<Phase, Integer> map = dal.getWorkTimeOnProjectByPhase(p);
-			System.out.println(map);
-
-			System.out.println(dal.getSumEmployeeEffortByState(empl1, IssueType.NEW));
-
-			System.out.println(dal.getWorkTimeOfEmployeeOnProjectByState(empl1, p, IssueType.NEW));
+			System.out.println("+++ end Transaction +++");
 
 		}
 
