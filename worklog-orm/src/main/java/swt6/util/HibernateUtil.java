@@ -1,4 +1,4 @@
-package swt6.orm.hibernate;
+package swt6.util;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

@@ -5,12 +5,14 @@
 <hibernate-configuration>
 	<session-factory>
 		<!-- DERBY network server properties -->
-		<property name="hibernate.connection.driver_class">org.apache.derby.jdbc.ClientDriver</property>
-		<property name="hibernate.connection.url">jdbc:derby://localhost/WorkLogDb;create=true</property>
-		<property name="hibernate.dialect">org.hibernate.dialect.DerbyTenSevenDialect</property>
+		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/worklogdb</property>
+<!-- 		<property name="hibernate.dialect">org.hibernate.dialect.DerbyTenSevenDialect</property> -->
+ <property name="connection.username">root</property>
+    <property name="connection.password"></property>
 
 		<property name="hibernate.hbm2ddl.auto">create</property>
-		<property name="hibernate.show_sql">false</property>
+		<property name="hibernate.show_sql">true</property>
 		<property name="hibernate.format_sql">false</property>
 		<property name="hibernate.current_session_context_class">thread</property>
 		<!-- mapping defined in mapping file -->

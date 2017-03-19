@@ -14,8 +14,8 @@ import swt6.orm.domain.PhaseDescriptor;
 import swt6.orm.domain.PriorityType;
 import swt6.orm.domain.Project;
 import swt6.orm.domain.TemporaryEmployee;
-import swt6.orm.hibernate.HibernateUtil;
 import swt6.util.DateUtil;
+import swt6.util.HibernateUtil;
 
 public class Client {
 
@@ -24,7 +24,7 @@ public class Client {
 		System.out.println("###### IssueTracking Console Client ######");
 
 		try (IssueTrackingDal dal = new IssueTrackingDal()) {
-			HibernateUtil.setConfigFile("hibernate.cfg2.xml");
+			HibernateUtil.setConfigFile("hibernate.cfg-mysql.xml");
 
 			System.out.println("------------ Creating Employees ---------------");
 			System.out.println("+++ start Transaction +++");

@@ -28,7 +28,7 @@ import swt6.orm.domain.Phase;
 import swt6.orm.domain.PhaseDescriptor;
 import swt6.orm.domain.Project;
 import swt6.orm.domain.TemporaryEmployee;
-import swt6.orm.hibernate.HibernateUtil;
+import swt6.util.HibernateUtil;
 
 public class IssueTrackingDal implements AutoCloseable {
 
